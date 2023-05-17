@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
         title: 'TutorialApp',
         theme: ThemeData(
           useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.purple.shade300),
         ),
         home: MyHomePage(),
       ),
@@ -38,21 +38,58 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
+    var pair = appState.current;
 
     return Scaffold(
-      body: Column(
-        children: [
-          Text('A random idea spawned:'),
-          Text(appState.current.asLowerCase),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('A random idea spawned:'),
+            BigCard(
+                pair:
+                    pair), //this is refactored so that it is a widget that handles the pair of words being put together
+            SizedBox(
+                height:
+                    10), // this adds some spave between the idea widget and the button
+            //adding  button
+            ElevatedButton(
+              onPressed: () {
+                appState.getNext();
+              },
+              child: Text('Press me, next idea!'),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
 
-          //adding  button
-          ElevatedButton(
-            onPressed: () {
-              appState.getNext();
-            },
-            child: Text('Press me, next idea!'),
-          )
-        ],
+class BigCard extends StatelessWidget {
+  const BigCard({
+    super.key,
+    required this.pair,
+  });
+
+  final WordPair pair;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    final style = theme.textTheme.displayMedium!.copyWith(
+      color: theme.colorScheme.onPrimary,
+      backgroundColor: Colors.red,
+    );
+
+    return Card(
+      color: theme.colorScheme.primary,
+      child: Padding(
+        padding: const EdgeInsets.all(18.0),
+        child: Text("${pair.first} ${pair.second}", style: style),
+        //above is the right way to do it for more accessibility for users who need it
+        // orginally it will work fine as pair.asLowerCase
       ),
     );
   }
